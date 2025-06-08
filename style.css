@@ -83,6 +83,7 @@ main {
 h1 {
   font-size: 24px;
   margin-bottom: 10px;
+  text-decoration: none;
 }
 
 .description {
@@ -118,6 +119,7 @@ h1 {
 h2 {
   font-size: 22px;
   margin-top: 40px;
+  text-decoration: none;
 }
 
 .related-post {
@@ -128,6 +130,7 @@ h2 {
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 10px;
+  text-decoration: none;
 }
 
 .related-post-text {
