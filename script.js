@@ -1,28 +1,28 @@
-    function slugify(title) {
-      return title.trim()
-                  .toLowerCase()
-                  .replace(/\s+/g, '-')
-                  .replace(/[^\w\-]/g, '');
-    }
+function slugify(title) {
+  return title.trim()
+              .toLowerCase()
+              .replace(/\s+/g, '-')
+              .replace(/[^\w\-]/g, '');
+}
 
-    function getQueryParam(name) {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get(name);
-    }
+function getQueryParam(name) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(name);
+}
 
-    const documentId = getQueryParam('document');
-    const titleSlug = window.location.hash.slice(1);
+// ✅ Run this only if we're on a page with a title section (pdf.html)
+if (document.getElementById('title-section')) {
+  const documentId = getQueryParam('document');
+  const titleSlug = window.location.hash.slice(1);
 
-    const titleEl = document.getElementById('title-section');
-    const descEl = document.getElementById('description-section');
-    const iframeEl = document.getElementById('iframe-section');
-    const suggEl = document.getElementById('suggestion-section');
+  const titleEl = document.getElementById('title-section');
+  const descEl = document.getElementById('description-section');
+  const iframeEl = document.getElementById('iframe-section');
+  const suggEl = document.getElementById('suggestion-section');
 
-    if (!documentId || !titleSlug) {
-      titleEl.innerHTML = `<p class="description">Error: Missing document ID or title in URL.</p>`;
-      throw new Error('Missing document ID or title');
-    }
-
+  if (!documentId || !titleSlug) {
+    titleEl.innerHTML = `<p class="description">Error: Missing document ID or title in URL.</p>`;
+  } else {
     fetch('https://raw.githubusercontent.com/kuenastar115/scbd/refs/heads/main/scbd.csv')
       .then(response => response.text())
       .then(csvText => {
@@ -36,7 +36,7 @@
               d.ID.trim() === documentId.trim() &&
               slugify(d.Title) === titleSlug
             );
-              
+
             const docId = getQueryParam('document');
             const currentDoc = data.find(d => d.ID === docId);
 
@@ -53,17 +53,14 @@
             document.title = doc.Title;
 
             const downloadUrl = `https://ilide.info/docgeneratev2?fileurl=https://scribd.vdownloaders.com/pdownload/${doc.ID}/`;
-            
-            //Set meta description
+
             const metaDescription = document.querySelector('meta[name="description"]');
             if (metaDescription) {
-              metaDescription.setAttribute('content', doc.Summary.slice(0,160));
+              metaDescription.setAttribute('content', doc.Summary.slice(0, 160));
             }
-            
-            // Set title
+
             titleEl.innerHTML = `<h1>${doc.Title}</h1>`;
-            
-            // Set description
+
             descEl.innerHTML = `
               <p class="description">
                 This document is entitled <strong>${doc.Title}</strong> uploaded by Scribd Download Team.
@@ -74,7 +71,6 @@
               <a class="download-button" href="${downloadUrl}" target="_blank"> DOWNLOAD <span style="font-size: 20px;">⬇️</span></a>
             `;
 
-            // Set iframe
             iframeEl.innerHTML = `
               <iframe class="scribd_iframe_embed"
                 title="${doc.Title}"
@@ -89,7 +85,6 @@
               </iframe>
             `;
 
-            // Set suggestions
             const otherDocs = data.filter(d => d.ID.trim() !== doc.ID.trim());
             const shuffled = otherDocs.sort(() => 0.5 - Math.random()).slice(0, 10);
 
@@ -99,20 +94,18 @@
               const url = `${baseUrl}/pdf.html?document=${d.ID}#${slug}`;
               return `
                 <div class="related-post">
-                <div class="related-post-title">
-                  <a href="${url}">
-                    ${d.Title}
-                  </a></div>
-                  <div class="related-post-text">
-                    ${d.Summary}
+                  <div class="related-post-title">
+                    <a href="${url}">${d.Title}</a>
+                  </div>
+                  <div class="related-post-text">${d.Summary}
                     <hr class="post-divider">
                   </div>
-               </div>
+                </div>
               `;
             }).join('');
 
             suggEl.innerHTML = `
-            <h2>Documents related to ${doc.Title}</h2>
+              <h2>Documents related to ${doc.Title}</h2>
               <hr class="post-divider">
               ${suggestions}
             `;
@@ -123,10 +116,10 @@
         console.error('Failed to load CSV:', err);
         titleEl.innerHTML = `<p>Error loading document data.</p>`;
       });
+  }
+}
 
-
-
-//Fix search in index.html
+// ✅ Universal search form handling
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('searchForm');
   if (form) {
@@ -141,5 +134,3 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
-
-
