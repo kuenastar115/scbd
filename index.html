@@ -50,7 +50,7 @@
                   .replace(/[^\w\-]/g, '');
     }
 
-    fetch('https://raw.githubusercontent.com/zie2store/tipirusak/main/public/scrbd.csv')
+    fetch('/scrbd.csv')
       .then(response => response.text())
       .then(csvText => {
         Papa.parse(csvText, {
