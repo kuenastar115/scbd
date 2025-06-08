@@ -19,7 +19,7 @@
     const suggEl = document.getElementById('suggestion-section');
 
     if (!documentId || !titleSlug) {
-      titleEl.innerHTML = `<p>Error: Missing document ID or title in URL.</p>`;
+      titleEl.innerHTML = `<p class="description">Error: Missing document ID or title in URL.</p>`;
       throw new Error('Missing document ID or title');
     }
 
@@ -38,7 +38,7 @@
             );
 
             if (!doc) {
-              titleEl.innerHTML = `<p>Document not found for ID: ${documentId} and title: ${titleSlug}</p>`;
+              titleEl.innerHTML = `<p class="description">Document not found for ID: ${documentId} and title: ${titleSlug}</p>`;
               return;
             }
 
@@ -88,7 +88,7 @@
             const suggestions = shuffled.map(d => {
               const slug = slugify(d.Title);
               const baseUrl = window.location.origin;
-              const url = `${baseUrl}/viewer.html?document=${d.ID}#${slug}`;
+              const url = `${baseUrl}/pdf.html?document=${d.ID}#${slug}`;
               return `
                 <div class="related-post">
                 <div class="related-post-title">
