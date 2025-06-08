@@ -35,6 +35,11 @@ header .container {
   font-size: 38px;
   font-weight: bold;
   color: #9aa9b3;
+  text-decoration: none;
+}
+
+.logo:hover {
+  color: #777;
 }
 
 .search-form {
