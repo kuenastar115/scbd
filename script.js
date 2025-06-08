@@ -105,7 +105,7 @@
 
             suggEl.innerHTML = `
             <h2>Documents related to ${doc.Title}</h2>
-          
+              <hr class="post-divider">
               ${suggestions}
             `;
           }
