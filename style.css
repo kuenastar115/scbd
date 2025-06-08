@@ -187,7 +187,7 @@ footer nav a {
   line-height: 1.6;
   margin-bottom: 20px;
   color: #888;
-  width: 100%;
+  max-width: 960%;
 }
 
 /* Responsive */
