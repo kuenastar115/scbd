@@ -26,7 +26,8 @@
     </div>
   </header>
 <main>
-  <h1>📚 Featured Scribd Documents</h1>
+  <h1>Thousand documents from [SCRIBD] ready to download</h1>
+  <hr class="post-divider">
   <div id="results">Loading suggestions...</div>
   <div id="suggestion-section"></div>
 </main>
@@ -66,10 +67,16 @@
               const baseUrl = window.location.origin;
               const url = `${baseUrl}/pdf.html?document=${d.ID}#${slug}`;
               return `
-                <div class="result-item">
-                  <a href="${url}">📄 ${d.Title}</a>
-                  <div>${d.Summary}</div>
-                </div>
+                <div class="related-post">
+                <div class="related-post-title">
+                  <a href="${url}">
+                    ${d.Title}
+                  </a></div>
+                  <div class="related-post-text">
+                    ${d.Summary}
+                    <hr class="post-divider">
+                  </div>
+               </div>
               `;
             }).join('');
 
