@@ -42,7 +42,7 @@
 
             const breadcrumb = document.getElementById('breadcrumb');
             if (currentDoc) {
-              breadcrumb.innerHTML = `<a href="/index.html">Home</a> &raquo; ${currentDoc.Title}`;
+              breadcrumb.innerHTML = `<a href="${baseUrl}">Home</a> &raquo; ${currentDoc.Title}`;
             }
 
             if (!doc) {
