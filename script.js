@@ -134,3 +134,44 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+// ✅ Render suggestions on index.html if #results exists
+if (document.getElementById('results')) {
+  fetch('https://raw.githubusercontent.com/kuenastar115/scbd/refs/heads/main/scbd.csv')
+    .then(response => response.text())
+    .then(csvText => {
+      Papa.parse(csvText, {
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+          const data = results.data;
+
+          const shuffled = data.sort(() => 0.5 - Math.random()).slice(0, 10);
+
+          const suggestions = shuffled.map(d => {
+            const slug = slugify(d.Title);
+            const baseUrl = window.location.origin;
+            const url = `${baseUrl}/pdf.html?document=${d.ID}#${slug}`;
+            return `
+              <div class="related-post">
+                <div class="related-post-title">
+                  <a href="${url}">${d.Title}</a>
+                </div>
+                <div class="related-post-text">
+                  ${d.Summary}
+                  <hr class="post-divider">
+                </div>
+              </div>
+            `;
+          }).join('');
+
+          document.getElementById('results').innerHTML = suggestions;
+        }
+      });
+    })
+    .catch(err => {
+      console.error('Error loading index:', err);
+      document.getElementById('results').innerHTML = '<p>Error loading documents.</p>';
+    });
+}
+
