@@ -114,7 +114,7 @@ if (document.getElementById('title-section')) {
                 has been downloaded for ${doc.Views} times.
               </p>
               
-              <a class="download-button" href="${downloadUrl}" target="_blank"> DOWNLOAD <span style="font-size: 20px;">⬇️</span></a>
+              <a class="download-button" href="${downloadUrl}" target="_blank"> DOWNLOAD <span style="font-size: 20px;">PDF</span></a>
             `;
 
             iframeEl.innerHTML = `
