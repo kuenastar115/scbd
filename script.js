@@ -36,6 +36,14 @@
               d.ID.trim() === documentId.trim() &&
               slugify(d.Title) === titleSlug
             );
+              
+            const docId = getQueryParam('document');
+            const currentDoc = data.find(d => d.ID === docId);
+
+            const breadcrumb = document.getElementById('breadcrumb');
+            if (currentDoc) {
+              breadcrumb.innerHTML = `<a href="/index.html">Home</a> &raquo; ${currentDoc.Title}`;
+            }
 
             if (!doc) {
               titleEl.innerHTML = `<p class="description">Document not found for ID: ${documentId} and title: ${titleSlug}</p>`;
