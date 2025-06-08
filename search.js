@@ -66,7 +66,7 @@ function slugify(title) {
                 return `
                   <div class="related-post">
                   <div class="related-post-title">
-                  <hr class="post-divider">
+                 
                     <a href="${url}">${highlightedTitle}</a></div>
                     <div class="related-post-text">${highlightedSummary}
                     <hr class="post-divider">
@@ -87,7 +87,7 @@ function slugify(title) {
                 return `
                 <div class="related-post">
                 <div class="related-post-title">
-                <hr class="post-divider">
+                
                   <a href="${url}">${d.Title}</a></div>
                   <div class="related-post-text">${d.Summary}
                     <hr class="post-divider">
