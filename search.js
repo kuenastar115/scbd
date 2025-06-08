@@ -64,7 +64,7 @@ function slugify(title) {
                 const highlightedTitle = highlight(d.Title, queryWords);
                 const highlightedSummary = highlight(d.Summary, queryWords);
                 return `
-                  <hr class="post-divider">
+                 
                   <div class="related-post">
                   <div class="related-post-title">
                  
@@ -86,7 +86,7 @@ function slugify(title) {
                 const slug = slugify(d.Title);
                 const url = `${baseUrl}/pdf.html?document=${d.ID}#${slug}`;
                 return `
-                <hr class="post-divider">
+             
                 <div class="related-post">
                 <div class="related-post-title">
                 
