@@ -108,11 +108,12 @@ if (document.getElementById('title-section')) {
             titleEl.innerHTML = `<h1>${doc.Title}</h1>`;
 
             descEl.innerHTML = `
+              <p class="description">${doc.Summary}. In this document entitled ${doc.Title}, we can get a lot of benefits and information. </p>
               <p class="description">
                 <strong>${doc.Title}</strong> contains ${doc.Pages} pages in a PDF document type uploaded by SCRB Downloader Team. This PDF document with an ID ${doc.ID}
                 has been downloaded for ${doc.Views} times.
               </p>
-              <p class="description">In this document entitled ${doc.Title}, we can get a lot of benefits. ${doc.Summary}.</p>
+              
               <a class="download-button" href="${downloadUrl}" target="_blank"> DOWNLOAD <span style="font-size: 20px;">⬇️</span></a>
             `;
 
