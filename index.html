@@ -27,6 +27,7 @@
   </header>
 <main>
   <h1>📚 Featured Scribd Documents</h1>
+  <div id="results">Loading suggestions...</div>
   <div id="suggestion-section"></div>
 </main>
   <!-- Footer -->
@@ -41,6 +42,45 @@
       &copy;2025 - Scrbd Document Finder
     </div>
   </footer>
+<script>
+    function slugify(title) {
+      return title.trim()
+                  .toLowerCase()
+                  .replace(/\s+/g, '-')
+                  .replace(/[^\w\-]/g, '');
+    }
+
+    fetch('https://raw.githubusercontent.com/zie2store/tipirusak/main/public/scrbd.csv')
+      .then(response => response.text())
+      .then(csvText => {
+        Papa.parse(csvText, {
+          header: true,
+          skipEmptyLines: true,
+          complete: function(results) {
+            const data = results.data;
+
+            const shuffled = data.sort(() => 0.5 - Math.random()).slice(0, 10);
+
+            const suggestions = shuffled.map(d => {
+              const slug = slugify(d.Title);
+              const url = `https://tipirusak.vercel.app/?document=${d.ID}#${slug}`;
+              return `
+                <div class="result-item">
+                  <a href="${url}">📄 ${d.Title}</a>
+                  <div>${d.Summary}</div>
+                </div>
+              `;
+            }).join('');
+
+            document.getElementById('results').innerHTML = suggestions;
+          }
+        });
+      })
+      .catch(err => {
+        console.error('Error loading index:', err);
+        document.getElementById('results').innerHTML = '<p>Error loading documents.</p>';
+      });
+  </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="/script.js"></script>
 </body>
