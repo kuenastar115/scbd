@@ -25,7 +25,7 @@ function slugify(title) {
     const baseUrl = window.location.origin;
     const queryParam = getQueryParam('query');
     if (queryParam) {
-      document.title = `${matches.length} document${matches.length !== 1 ? 's' : ''} related to ${queryParam.replace(/-/g, ' ')}`;
+      document.title = `SCRIBD domuments related to ${queryParam.replace(/-/g, ' ')}`;
         }
     const queryWords = queryParam ? queryParam.toLowerCase().split('-').filter(Boolean) : [];
 
@@ -64,6 +64,7 @@ function slugify(title) {
                 const highlightedTitle = highlight(d.Title, queryWords);
                 const highlightedSummary = highlight(d.Summary, queryWords);
                 return `
+                 <hr class="post-divider">
                  <div class="related-post">
                  <div class="related-post-title">
                  <a href="${url}">${highlightedTitle}</a></div>
@@ -84,6 +85,7 @@ function slugify(title) {
                 const slug = slugify(d.Title);
                 const url = `${baseUrl}/pdf.html?document=${d.ID}#${slug}`;
                 return `
+                  <hr class="post-divider">
                   <div class="related-post">
                   <div class="related-post-title">
                   <a href="${url}">${d.Title}</a></div>
