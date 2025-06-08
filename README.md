@@ -1,2 +1,2 @@
 # scbd
-SCBD
+SCBD - Senyum Celalu Biar DUUUUURRRRRR
