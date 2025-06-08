@@ -10,7 +10,53 @@ function getQueryParam(name) {
   return urlParams.get(name);
 }
 
-// ✅ Run this only if we're on a page with a title section (pdf.html)
+// ✨ Utilities for search highlighting
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function highlight(text, words) {
+  let escapedWords = words.map(w => escapeRegExp(w));
+  const pattern = new RegExp(`(${escapedWords.join('|')})`, 'gi');
+  return text.replace(pattern, '<mark>$1</mark>');
+}
+
+// 🧩 Load external HTML partials (header & footer)
+document.addEventListener("DOMContentLoaded", () => {
+  async function loadPartial(selector, file, callback) {
+    const el = document.querySelector(selector);
+    if (el) {
+      try {
+        const res = await fetch(file);
+        const html = await res.text();
+        el.innerHTML = html;
+        if (typeof callback === 'function') callback();
+      } catch (err) {
+        console.error(`Failed to load partial ${file}:`, err);
+      }
+    }
+  }
+
+  // Load header and attach search logic after it's injected
+  loadPartial("#header-placeholder", "header.html", () => {
+    const form = document.getElementById('searchForm');
+    if (form) {
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const input = document.getElementById('searchInput').value.trim();
+        if (input) {
+          const query = input.toLowerCase().replace(/\s+/g, '-');
+          const baseUrl = window.location.origin;
+          window.location.href = `${baseUrl}/search.html?query=${query}`;
+        }
+      });
+    }
+  });
+
+  loadPartial("#footer-placeholder", "footer.html");
+});
+
+// 📄 PDF page rendering
 if (document.getElementById('title-section')) {
   const documentId = getQueryParam('document');
   const titleSlug = window.location.hash.slice(1);
@@ -29,7 +75,7 @@ if (document.getElementById('title-section')) {
         Papa.parse(csvText, {
           header: true,
           skipEmptyLines: true,
-          complete: function(results) {
+          complete: function (results) {
             const data = results.data;
 
             const doc = data.find(d =>
@@ -119,31 +165,15 @@ if (document.getElementById('title-section')) {
   }
 }
 
-// ✅ Universal search form handling
-document.addEventListener('DOMContentLoaded', () => {
-  const form = document.getElementById('searchForm');
-  if (form) {
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const input = document.getElementById('searchInput').value.trim();
-      if (input) {
-        const query = input.toLowerCase().replace(/\s+/g, '-');
-        const baseUrl = window.location.origin;
-        window.location.href = `${baseUrl}/search.html?query=${query}`;
-      }
-    });
-  }
-});
-
-// ✅ Render suggestions on index.html if #results exists
-if (document.getElementById('results')) {
+// 🏠 Index page: show random 10 docs
+if (document.getElementById('results') && !document.getElementById('header')) {
   fetch('https://raw.githubusercontent.com/kuenastar115/scbd/refs/heads/main/scbd.csv')
     .then(response => response.text())
     .then(csvText => {
       Papa.parse(csvText, {
         header: true,
         skipEmptyLines: true,
-        complete: function(results) {
+        complete: function (results) {
           const data = results.data;
 
           const shuffled = data.sort(() => 0.5 - Math.random()).slice(0, 10);
@@ -175,17 +205,6 @@ if (document.getElementById('results')) {
     });
 }
 
-// ✨ Utilities for search highlighting
-function escapeRegExp(string) {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-function highlight(text, words) {
-  let escapedWords = words.map(w => escapeRegExp(w));
-  const pattern = new RegExp(`(${escapedWords.join('|')})`, 'gi');
-  return text.replace(pattern, '<mark>$1</mark>');
-}
-
 // 🔍 Search page rendering
 if (document.getElementById('header') && document.getElementById('results')) {
   const baseUrl = window.location.origin;
@@ -207,7 +226,7 @@ if (document.getElementById('header') && document.getElementById('results')) {
         Papa.parse(csvText, {
           header: true,
           skipEmptyLines: true,
-          complete: function(results) {
+          complete: function (results) {
             const data = results.data;
 
             const matches = data.filter(d => {
@@ -269,23 +288,3 @@ if (document.getElementById('header') && document.getElementById('results')) {
       });
   }
 }
-
-// 🧩 Load external HTML partials (header & footer)
-document.addEventListener("DOMContentLoaded", () => {
-  async function loadPartial(selector, file) {
-    const el = document.querySelector(selector);
-    if (el) {
-      try {
-        const res = await fetch(file);
-        const html = await res.text();
-        el.innerHTML = html;
-      } catch (err) {
-        console.error(`Failed to load partial ${file}:`, err);
-      }
-    }
-  }
-
-  loadPartial("#header-placeholder", "header.html");
-  loadPartial("#footer-placeholder", "footer.html");
-});
-
