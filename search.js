@@ -69,9 +69,10 @@ function slugify(title) {
                  <div class="related-post-title">
                  <a href="${url}">${highlightedTitle}</a></div>
                     <div class="related-post-text">${highlightedSummary}
-                    <hr class="post-divider">
+                    
                     </div>
                   </div>
+                   <hr class="post-divider">
                 `;
               }).join('');
 
@@ -90,9 +91,9 @@ function slugify(title) {
                   <div class="related-post-title">
                   <a href="${url}">${d.Title}</a></div>
                   <div class="related-post-text">${d.Summary}
-                    <hr class="post-divider">
                   </div>
                </div>
+                <hr class="post-divider">
               `;
             }).join('');
 
