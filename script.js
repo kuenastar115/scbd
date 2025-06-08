@@ -134,3 +134,20 @@
       }
     });
 
+//Fix search in index.html
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('searchForm');
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const input = document.getElementById('searchInput').value.trim();
+      if (input) {
+        const query = input.toLowerCase().replace(/\s+/g, '-');
+        const baseUrl = window.location.origin;
+        window.location.href = `${baseUrl}/search.html?query=${query}`;
+      }
+    });
+  }
+});
+
+
