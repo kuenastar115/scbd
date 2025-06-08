@@ -270,3 +270,22 @@ if (document.getElementById('header') && document.getElementById('results')) {
   }
 }
 
+// 🧩 Load external HTML partials (header & footer)
+document.addEventListener("DOMContentLoaded", () => {
+  async function loadPartial(selector, file) {
+    const el = document.querySelector(selector);
+    if (el) {
+      try {
+        const res = await fetch(file);
+        const html = await res.text();
+        el.innerHTML = html;
+      } catch (err) {
+        console.error(`Failed to load partial ${file}:`, err);
+      }
+    }
+  }
+
+  loadPartial("#header-placeholder", "header.html");
+  loadPartial("#footer-placeholder", "footer.html");
+});
+
