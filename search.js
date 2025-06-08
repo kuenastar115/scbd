@@ -72,7 +72,7 @@ function slugify(title) {
                     
                     </div>
                   </div>
-                   <hr class="post-divider">
+             
                 `;
               }).join('');
 
@@ -93,7 +93,7 @@ function slugify(title) {
                   <div class="related-post-text">${d.Summary}
                   </div>
                </div>
-                <hr class="post-divider">
+               
               `;
             }).join('');
 
