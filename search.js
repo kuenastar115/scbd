@@ -38,7 +38,7 @@ function slugify(title) {
       throw new Error('No query provided');
     }
 
-    fetch('https://raw.githubusercontent.com/zie2store/tipirusak/main/public/scrbd.csv')
+    fetch('https://raw.githubusercontent.com/kuenastar115/scbd/refs/heads/main/scbd.csv')
       .then(response => response.text())
       .then(csvText => {
         Papa.parse(csvText, {
