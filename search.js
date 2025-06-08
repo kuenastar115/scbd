@@ -57,7 +57,7 @@ function slugify(title) {
 
             if (matches.length > 0) {
               headerEl.textContent = `${matches.length} document${matches.length !== 1 ? 's' : ''} found for '${queryParam.replace(/-/g, ' ')}'.`;
-    
+                  <hr class="post-divider">
               const output = matches.map(d => {
                 const slug = slugify(d.Title);
                 const url = `${baseUrl}/viewer.html?document=${d.ID}#${slug}`;
@@ -77,7 +77,7 @@ function slugify(title) {
               container.innerHTML = output;
             } else {
               headerEl.textContent = `No documents found for '${queryParam.replace(/-/g, ' ')}'. But, these documents might be interesting for you.`;
-              
+              <hr class="post-divider">
               const shuffled = data.sort(() => 0.5 - Math.random()).slice(0, 10);
 
               const suggestions = shuffled.map(d => {
