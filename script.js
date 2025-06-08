@@ -124,15 +124,7 @@
         titleEl.innerHTML = `<p>Error loading document data.</p>`;
       });
 
-    document.getElementById('searchForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const input = document.getElementById('searchInput').value.trim();
-      if (input) {
-        const query = input.toLowerCase().replace(/\s+/g, '-');
-        const baseUrl = window.location.origin;
-        window.location.href = `${baseUrl}/search.html?query=${query}`;
-      }
-    });
+
 
 //Fix search in index.html
 document.addEventListener('DOMContentLoaded', () => {
