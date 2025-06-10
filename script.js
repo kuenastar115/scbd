@@ -94,8 +94,8 @@ if (document.getElementById('title-section')) {
           titleEl.innerHTML = `<p class="description">Document not found for ID: ${documentId} and title: ${titleSlug}</p>`;
           return;
         }
-
-        document.title = doc.Title;
+        //Title above URL
+        document.title = `[PDF] ${doc.Title} | English Resources`;
 
         const downloadUrl = `https://ilide.info/docgeneratev2?fileurl=https://scribd.vdownloaders.com/pdownload/${doc.ID}/`;
 
