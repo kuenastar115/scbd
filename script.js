@@ -1,4 +1,4 @@
-const CSV_URL = 'https://raw.githubusercontent.com/kuenastar115/scbd/refs/heads/main/scbd.csv';
+const CSV_URL = 'https://raw.githubusercontent.com/kuenastar115/scbd/main/scbd.csv';
 
 function slugify(title) {
   return title.trim()
