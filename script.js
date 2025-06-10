@@ -1,4 +1,8 @@
-const CSV_URL = 'https://raw.githubusercontent.com/kuenastar115/scbd/main/scbd.csv';
+const CSV_URLS = [
+  'https://raw.githubusercontent.com/kuenastar115/scbd/main/scbd.csv',
+  'https://raw.githubusercontent.com/kuenastar115/scbd/main/scbd1.csv',
+  'https://raw.githubusercontent.com/kuenastar115/scbd/main/scbd2.csv'
+];
 
 function slugify(title) {
   return title.trim()
@@ -12,7 +16,6 @@ function getQueryParam(name) {
   return urlParams.get(name);
 }
 
-// ✨ Utilities for search highlighting
 function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -23,7 +26,14 @@ function highlight(text, words) {
   return text.replace(pattern, '<mark>$1</mark>');
 }
 
-// 🧩 Load external HTML partials (header & footer)
+async function loadAllCSVs() {
+  const texts = await Promise.all(CSV_URLS.map(url => fetch(url).then(res => res.text())));
+  const allData = texts.flatMap(text => {
+    return Papa.parse(text, { header: true, skipEmptyLines: true }).data;
+  });
+  return allData;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   async function loadPartial(selector, file, callback) {
     const el = document.querySelector(selector);
@@ -39,7 +49,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Load header and attach search logic after it's injected
   loadPartial("#header-placeholder", "header.html", () => {
     const form = document.getElementById('searchForm');
     if (form) {
@@ -58,7 +67,6 @@ document.addEventListener("DOMContentLoaded", () => {
   loadPartial("#footer-placeholder", "footer.html");
 });
 
-// 📄 PDF page rendering
 if (document.getElementById('title-section')) {
   const documentId = getQueryParam('document');
   const titleSlug = window.location.hash.slice(1);
@@ -71,94 +79,81 @@ if (document.getElementById('title-section')) {
   if (!documentId || !titleSlug) {
     titleEl.innerHTML = `<p class="description">Error: Missing document ID or title in URL.</p>`;
   } else {
-    fetch('CSV_URL')
-      .then(response => response.text())
-      .then(csvText => {
-        Papa.parse(csvText, {
-          header: true,
-          skipEmptyLines: true,
-          complete: function (results) {
-            const data = results.data;
+    loadAllCSVs()
+      .then(data => {
+        const doc = data.find(d => d.ID.trim() === documentId.trim() && slugify(d.Title) === titleSlug);
+        const docId = getQueryParam('document');
+        const currentDoc = data.find(d => d.ID === docId);
 
-            const doc = data.find(d =>
-              d.ID.trim() === documentId.trim() &&
-              slugify(d.Title) === titleSlug
-            );
+        const breadcrumb = document.getElementById('breadcrumb');
+        if (currentDoc) {
+          breadcrumb.innerHTML = `<a href="/index.html">Home</a> &raquo; ${currentDoc.Title}`;
+        }
 
-            const docId = getQueryParam('document');
-            const currentDoc = data.find(d => d.ID === docId);
+        if (!doc) {
+          titleEl.innerHTML = `<p class="description">Document not found for ID: ${documentId} and title: ${titleSlug}</p>`;
+          return;
+        }
 
-            const breadcrumb = document.getElementById('breadcrumb');
-            if (currentDoc) {
-              breadcrumb.innerHTML = `<a href="/index.html">Home</a> &raquo; ${currentDoc.Title}`;
-            }
+        document.title = doc.Title;
 
-            if (!doc) {
-              titleEl.innerHTML = `<p class="description">Document not found for ID: ${documentId} and title: ${titleSlug}</p>`;
-              return;
-            }
+        const downloadUrl = `https://ilide.info/docgeneratev2?fileurl=https://scribd.vdownloaders.com/pdownload/${doc.ID}/`;
 
-            document.title = doc.Title;
+        const metaDescription = document.querySelector('meta[name="description"]');
+        if (metaDescription) {
+          metaDescription.setAttribute('content', doc.Summary.slice(0, 160));
+        }
 
-            const downloadUrl = `https://ilide.info/docgeneratev2?fileurl=https://scribd.vdownloaders.com/pdownload/${doc.ID}/`;
+        titleEl.innerHTML = `<h1>${doc.Title}</h1>`;
 
-            const metaDescription = document.querySelector('meta[name="description"]');
-            if (metaDescription) {
-              metaDescription.setAttribute('content', doc.Summary.slice(0, 160));
-            }
+        descEl.innerHTML = `
+          <p class="description">${doc.Summary}.</p>
+          <p class="description">
+            <strong>${doc.Title}</strong> contains ${doc.Pages} pages in a PDF document type uploaded by SCRB Downloader Team. This PDF document with an ID ${doc.ID}
+            has been downloaded for ${doc.Views} times. In this document entitled ${doc.Title}, we can get a lot of benefits and information.
+          </p>
+          
+          <a class="download-button" href="${downloadUrl}" target="_blank"><span style="font-size: 20px;">DOWNLOAD PDF</span></a>
+        `;
 
-            titleEl.innerHTML = `<h1>${doc.Title}</h1>`;
+        iframeEl.innerHTML = `
+          <iframe class="scribd_iframe_embed"
+            title="${doc.Title}"
+            src="https://www.scribd.com/embeds/${doc.ID}/content?start_page=1&view_mode=scroll&access_key=key-NCzuA9v6DY7zHHNCjjID"
+            tabindex="0"
+            data-auto-height="true"
+            data-aspect-ratio="0.6536"
+            scrolling="no"
+            width="100%"
+            height="800"
+            frameborder="0">
+          </iframe>
+        `;
 
-            descEl.innerHTML = `
-              <p class="description">${doc.Summary}.</p>
-              <p class="description">
-                <strong>${doc.Title}</strong> contains ${doc.Pages} pages in a PDF document type uploaded by SCRB Downloader Team. This PDF document with an ID ${doc.ID}
-                has been downloaded for ${doc.Views} times. In this document entitled ${doc.Title}, we can get a lot of benefits and information.
-              </p>
-              
-              <a class="download-button" href="${downloadUrl}" target="_blank"><span style="font-size: 20px;">DOWNLOAD PDF</span></a>
-            `;
+        const otherDocs = data.filter(d => d.ID.trim() !== doc.ID.trim());
+        const shuffled = otherDocs.sort(() => 0.5 - Math.random()).slice(0, 10);
 
-            iframeEl.innerHTML = `
-              <iframe class="scribd_iframe_embed"
-                title="${doc.Title}"
-                src="https://www.scribd.com/embeds/${doc.ID}/content?start_page=1&view_mode=scroll&access_key=key-NCzuA9v6DY7zHHNCjjID"
-                tabindex="0"
-                data-auto-height="true"
-                data-aspect-ratio="0.6536"
-                scrolling="no"
-                width="100%"
-                height="800"
-                frameborder="0">
-              </iframe>
-            `;
+        const suggestions = shuffled.map(d => {
+          const slug = slugify(d.Title);
+          const baseUrl = window.location.origin;
+          const url = `${baseUrl}/pdf?document=${d.ID}#${slug}`;
+          return `
+            <div class="related-post">
+              <div class="related-post-title">
+                <a href="${url}">${d.Title}</a>
+              </div>
+              <div class="related-post-text">${d.Summary}
+                <hr class="post-divider">
+              </div>
+            </div>
+          `;
+        }).join('');
 
-            const otherDocs = data.filter(d => d.ID.trim() !== doc.ID.trim());
-            const shuffled = otherDocs.sort(() => 0.5 - Math.random()).slice(0, 10);
-
-            const suggestions = shuffled.map(d => {
-              const slug = slugify(d.Title);
-              const baseUrl = window.location.origin;
-              const url = `${baseUrl}/pdf?document=${d.ID}#${slug}`;
-              return `
-                <div class="related-post">
-                  <div class="related-post-title">
-                    <a href="${url}">${d.Title}</a>
-                  </div>
-                  <div class="related-post-text">${d.Summary}
-                    <hr class="post-divider">
-                  </div>
-                </div>
-              `;
-            }).join('');
-
-            suggEl.innerHTML = `
-              <h2>Documents related to ${doc.Title}</h2>
-              <hr class="post-divider">
-              ${suggestions}
-            `;
-          }
-        });
+        suggEl.innerHTML = `
+          <h2>Documents related to ${doc.Title}</h2>
+          <hr class="post-divider">
+          ${suggestions}
+        `;
       })
       .catch(err => {
         console.error('Failed to load CSV:', err);
@@ -167,39 +162,29 @@ if (document.getElementById('title-section')) {
   }
 }
 
-// 🏠 Index page: show random 10 docs
 if (document.getElementById('results') && !document.getElementById('header')) {
-  fetch('CSV_URL')
-    .then(response => response.text())
-    .then(csvText => {
-      Papa.parse(csvText, {
-        header: true,
-        skipEmptyLines: true,
-        complete: function (results) {
-          const data = results.data;
+  loadAllCSVs()
+    .then(data => {
+      const shuffled = data.sort(() => 0.5 - Math.random()).slice(0, 10);
 
-          const shuffled = data.sort(() => 0.5 - Math.random()).slice(0, 10);
+      const suggestions = shuffled.map(d => {
+        const slug = slugify(d.Title);
+        const baseUrl = window.location.origin;
+        const url = `${baseUrl}/pdf?document=${d.ID}#${slug}`;
+        return `
+          <div class="related-post">
+            <div class="related-post-title">
+              <a href="${url}">${d.Title}</a>
+            </div>
+            <div class="related-post-text">
+              ${d.Summary}
+              <hr class="post-divider">
+            </div>
+          </div>
+        `;
+      }).join('');
 
-          const suggestions = shuffled.map(d => {
-            const slug = slugify(d.Title);
-            const baseUrl = window.location.origin;
-            const url = `${baseUrl}/pdf?document=${d.ID}#${slug}`;
-            return `
-              <div class="related-post">
-                <div class="related-post-title">
-                  <a href="${url}">${d.Title}</a>
-                </div>
-                <div class="related-post-text">
-                  ${d.Summary}
-                  <hr class="post-divider">
-                </div>
-              </div>
-            `;
-          }).join('');
-
-          document.getElementById('results').innerHTML = suggestions;
-        }
-      });
+      document.getElementById('results').innerHTML = suggestions;
     })
     .catch(err => {
       console.error('Error loading index:', err);
@@ -207,13 +192,10 @@ if (document.getElementById('results') && !document.getElementById('header')) {
     });
 }
 
-// 🔍 Search page rendering
 if (document.getElementById('header') && document.getElementById('results')) {
   const baseUrl = window.location.origin;
   const queryParam = getQueryParam('query');
-
   const queryWords = queryParam ? queryParam.toLowerCase().split('-').filter(Boolean) : [];
-
   const headerEl = document.getElementById('header');
   const container = document.getElementById('results');
 
@@ -222,67 +204,51 @@ if (document.getElementById('header') && document.getElementById('results')) {
     container.innerHTML = "";
   } else {
     document.title = `SCRIBD documents related to ${queryParam.replace(/-/g, ' ')}`;
-    fetch('CSV_URL')
-      .then(response => response.text())
-      .then(csvText => {
-        Papa.parse(csvText, {
-          header: true,
-          skipEmptyLines: true,
-          complete: function (results) {
-            const data = results.data;
-
-            const matches = data.filter(d => {
-              const title = d.Title.toLowerCase();
-              const summary = d.Summary.toLowerCase();
-              return queryWords.some(q =>
-                title.includes(q) || summary.includes(q)
-              );
-            });
-
-            if (matches.length > 0) {
-              headerEl.textContent = `${matches.length} document${matches.length !== 1 ? 's' : ''} found for '${queryParam.replace(/-/g, ' ')}'.`;
-
-              const output = matches.map(d => {
-                const slug = slugify(d.Title);
-                const url = `${baseUrl}/pdf?document=${d.ID}#${slug}`;
-                const highlightedTitle = highlight(d.Title, queryWords);
-                const highlightedSummary = highlight(d.Summary, queryWords);
-                return `
-                  <hr class="post-divider">
-                  <div class="related-post">
-                    <div class="related-post-title">
-                      <a href="${url}">${highlightedTitle}</a>
-                    </div>
-                    <div class="related-post-text">${highlightedSummary}</div>
-                  </div>
-                `;
-              }).join('');
-
-              container.innerHTML = output;
-            } else {
-              headerEl.textContent = `No documents found for '${queryParam.replace(/-/g, ' ')}'. But, these documents might be interesting for you.`;
-
-              const suggestions = data
-                .sort(() => 0.5 - Math.random())
-                .slice(0, 10)
-                .map(d => {
-                  const slug = slugify(d.Title);
-                  const url = `${baseUrl}/pdf?document=${d.ID}#${slug}`;
-                  return `
-                    <hr class="post-divider">
-                    <div class="related-post">
-                      <div class="related-post-title">
-                        <a href="${url}">${d.Title}</a>
-                      </div>
-                      <div class="related-post-text">${d.Summary}</div>
-                    </div>
-                  `;
-                }).join('');
-
-              container.innerHTML = suggestions;
-            }
-          }
+    loadAllCSVs()
+      .then(data => {
+        const matches = data.filter(d => {
+          const title = d.Title.toLowerCase();
+          const summary = d.Summary.toLowerCase();
+          return queryWords.some(q => title.includes(q) || summary.includes(q));
         });
+
+        if (matches.length > 0) {
+          headerEl.textContent = `${matches.length} document${matches.length !== 1 ? 's' : ''} found for '${queryParam.replace(/-/g, ' ')}'.`;
+          const output = matches.map(d => {
+            const slug = slugify(d.Title);
+            const url = `${baseUrl}/pdf?document=${d.ID}#${slug}`;
+            const highlightedTitle = highlight(d.Title, queryWords);
+            const highlightedSummary = highlight(d.Summary, queryWords);
+            return `
+              <hr class="post-divider">
+              <div class="related-post">
+                <div class="related-post-title">
+                  <a href="${url}">${highlightedTitle}</a>
+                </div>
+                <div class="related-post-text">${highlightedSummary}</div>
+              </div>
+            `;
+          }).join('');
+
+          container.innerHTML = output;
+        } else {
+          headerEl.textContent = `No documents found for '${queryParam.replace(/-/g, ' ')}'. But, these documents might be interesting for you.`;
+          const suggestions = data.sort(() => 0.5 - Math.random()).slice(0, 10).map(d => {
+            const slug = slugify(d.Title);
+            const url = `${baseUrl}/pdf?document=${d.ID}#${slug}`;
+            return `
+              <hr class="post-divider">
+              <div class="related-post">
+                <div class="related-post-title">
+                  <a href="${url}">${d.Title}</a>
+                </div>
+                <div class="related-post-text">${d.Summary}</div>
+              </div>
+            `;
+          }).join('');
+
+          container.innerHTML = suggestions;
+        }
       })
       .catch(err => {
         console.error('Error loading search results:', err);
