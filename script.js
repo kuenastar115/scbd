@@ -15,7 +15,7 @@ function getQueryParam(name) {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get(name);
 }
-
+// ✨ Utilities for search highlighting
 function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -25,7 +25,7 @@ function highlight(text, words) {
   const pattern = new RegExp(`(${escapedWords.join('|')})`, 'gi');
   return text.replace(pattern, '<mark>$1</mark>');
 }
-
+// Load All CSVs
 async function loadAllCSVs() {
   const texts = await Promise.all(CSV_URLS.map(url => fetch(url).then(res => res.text())));
   const allData = texts.flatMap(text => {
@@ -33,7 +33,7 @@ async function loadAllCSVs() {
   });
   return allData;
 }
-
+// 🧩 Load external HTML partials (header & footer)
 document.addEventListener("DOMContentLoaded", () => {
   async function loadPartial(selector, file, callback) {
     const el = document.querySelector(selector);
@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadPartial("#footer-placeholder", "footer.html");
 });
-
+// 📄 PDF page rendering
 if (document.getElementById('title-section')) {
   const documentId = getQueryParam('document');
   const titleSlug = window.location.hash.slice(1);
@@ -161,7 +161,7 @@ if (document.getElementById('title-section')) {
       });
   }
 }
-
+// 🏠 Index page: show random 10 docs
 if (document.getElementById('results') && !document.getElementById('header')) {
   loadAllCSVs()
     .then(data => {
@@ -191,7 +191,7 @@ if (document.getElementById('results') && !document.getElementById('header')) {
       document.getElementById('results').innerHTML = '<p>Error loading documents.</p>';
     });
 }
-
+// 🔍 Search page rendering
 if (document.getElementById('header') && document.getElementById('results')) {
   const baseUrl = window.location.origin;
   const queryParam = getQueryParam('query');
