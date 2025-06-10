@@ -167,7 +167,7 @@ if (document.getElementById('title-section')) {
 
 // 🏠 Index page: show random 10 docs
 if (document.getElementById('results') && !document.getElementById('header')) {
-  fetch('https://raw.githubusercontent.com/kuenastar115/scbd/refs/heads/main/scbd.csv')
+  fetch('https://penelitianid.com/scbd.csv')
     .then(response => response.text())
     .then(csvText => {
       Papa.parse(csvText, {
@@ -220,7 +220,7 @@ if (document.getElementById('header') && document.getElementById('results')) {
     container.innerHTML = "";
   } else {
     document.title = `SCRIBD documents related to ${queryParam.replace(/-/g, ' ')}`;
-    fetch('https://raw.githubusercontent.com/kuenastar115/scbd/refs/heads/main/scbd.csv')
+    fetch('https://penelitianid.com/scbd.csv')
       .then(response => response.text())
       .then(csvText => {
         Papa.parse(csvText, {
