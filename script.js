@@ -1,7 +1,7 @@
 const CSV_URLS = [
-  'https://raw.githubusercontent.com/kuenastar115/scbd/main/scbd.csv',
-  'https://raw.githubusercontent.com/kuenastar115/scbd/main/scbd1.csv',
-  'https://raw.githubusercontent.com/kuenastar115/scbd/main/scbd2.csv'
+  'https://raw.githubusercontent.com/kuenastar115/scbd/refs/heads/main/scbd.csv',
+  'https://raw.githubusercontent.com/kuenastar115/scbd/refs/heads/main/scbd1.csv',
+  'https://raw.githubusercontent.com/kuenastar115/scbd/refs/heads/main/scbd2.csv'
 ];
 
 function slugify(title) {
