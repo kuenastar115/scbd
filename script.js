@@ -12,6 +12,7 @@ function getQueryParam(name) {
   return urlParams.get(name);
 }
 
+// ✨ Utilities for search highlighting
 function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -22,6 +23,7 @@ function highlight(text, words) {
   return text.replace(pattern, '<mark>$1</mark>');
 }
 
+// 🧩 Load external HTML partials (header & footer)
 document.addEventListener("DOMContentLoaded", () => {
   async function loadPartial(selector, file, callback) {
     const el = document.querySelector(selector);
@@ -37,6 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Load header and attach search logic after it's injected
   loadPartial("#header-placeholder", "header.html", () => {
     const form = document.getElementById('searchForm');
     if (form) {
@@ -55,6 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadPartial("#footer-placeholder", "footer.html");
 });
 
+// 📄 PDF page rendering
 if (document.getElementById('title-section')) {
   const documentId = getQueryParam('document');
   const titleSlug = window.location.hash.slice(1);
@@ -67,7 +71,7 @@ if (document.getElementById('title-section')) {
   if (!documentId || !titleSlug) {
     titleEl.innerHTML = `<p class="description">Error: Missing document ID or title in URL.</p>`;
   } else {
-    fetch(CSV_URL)
+    fetch('CSV_URL')
       .then(response => response.text())
       .then(csvText => {
         Papa.parse(csvText, {
@@ -75,7 +79,12 @@ if (document.getElementById('title-section')) {
           skipEmptyLines: true,
           complete: function (results) {
             const data = results.data;
-            const doc = data.find(d => d.ID.trim() === documentId.trim() && slugify(d.Title) === titleSlug);
+
+            const doc = data.find(d =>
+              d.ID.trim() === documentId.trim() &&
+              slugify(d.Title) === titleSlug
+            );
+
             const docId = getQueryParam('document');
             const currentDoc = data.find(d => d.ID === docId);
 
@@ -158,8 +167,9 @@ if (document.getElementById('title-section')) {
   }
 }
 
+// 🏠 Index page: show random 10 docs
 if (document.getElementById('results') && !document.getElementById('header')) {
-  fetch(CSV_URL)
+  fetch('CSV_URL')
     .then(response => response.text())
     .then(csvText => {
       Papa.parse(csvText, {
@@ -167,6 +177,7 @@ if (document.getElementById('results') && !document.getElementById('header')) {
         skipEmptyLines: true,
         complete: function (results) {
           const data = results.data;
+
           const shuffled = data.sort(() => 0.5 - Math.random()).slice(0, 10);
 
           const suggestions = shuffled.map(d => {
@@ -196,10 +207,13 @@ if (document.getElementById('results') && !document.getElementById('header')) {
     });
 }
 
+// 🔍 Search page rendering
 if (document.getElementById('header') && document.getElementById('results')) {
   const baseUrl = window.location.origin;
   const queryParam = getQueryParam('query');
+
   const queryWords = queryParam ? queryParam.toLowerCase().split('-').filter(Boolean) : [];
+
   const headerEl = document.getElementById('header');
   const container = document.getElementById('results');
 
@@ -208,7 +222,7 @@ if (document.getElementById('header') && document.getElementById('results')) {
     container.innerHTML = "";
   } else {
     document.title = `SCRIBD documents related to ${queryParam.replace(/-/g, ' ')}`;
-    fetch(CSV_URL)
+    fetch('CSV_URL')
       .then(response => response.text())
       .then(csvText => {
         Papa.parse(csvText, {
@@ -216,14 +230,18 @@ if (document.getElementById('header') && document.getElementById('results')) {
           skipEmptyLines: true,
           complete: function (results) {
             const data = results.data;
+
             const matches = data.filter(d => {
               const title = d.Title.toLowerCase();
               const summary = d.Summary.toLowerCase();
-              return queryWords.some(q => title.includes(q) || summary.includes(q));
+              return queryWords.some(q =>
+                title.includes(q) || summary.includes(q)
+              );
             });
 
             if (matches.length > 0) {
               headerEl.textContent = `${matches.length} document${matches.length !== 1 ? 's' : ''} found for '${queryParam.replace(/-/g, ' ')}'.`;
+
               const output = matches.map(d => {
                 const slug = slugify(d.Title);
                 const url = `${baseUrl}/pdf?document=${d.ID}#${slug}`;
@@ -243,19 +261,23 @@ if (document.getElementById('header') && document.getElementById('results')) {
               container.innerHTML = output;
             } else {
               headerEl.textContent = `No documents found for '${queryParam.replace(/-/g, ' ')}'. But, these documents might be interesting for you.`;
-              const suggestions = data.sort(() => 0.5 - Math.random()).slice(0, 10).map(d => {
-                const slug = slugify(d.Title);
-                const url = `${baseUrl}/pdf?document=${d.ID}#${slug}`;
-                return `
-                  <hr class="post-divider">
-                  <div class="related-post">
-                    <div class="related-post-title">
-                      <a href="${url}">${d.Title}</a>
+
+              const suggestions = data
+                .sort(() => 0.5 - Math.random())
+                .slice(0, 10)
+                .map(d => {
+                  const slug = slugify(d.Title);
+                  const url = `${baseUrl}/pdf?document=${d.ID}#${slug}`;
+                  return `
+                    <hr class="post-divider">
+                    <div class="related-post">
+                      <div class="related-post-title">
+                        <a href="${url}">${d.Title}</a>
+                      </div>
+                      <div class="related-post-text">${d.Summary}</div>
                     </div>
-                    <div class="related-post-text">${d.Summary}</div>
-                  </div>
-                `;
-              }).join('');
+                  `;
+                }).join('');
 
               container.innerHTML = suggestions;
             }
