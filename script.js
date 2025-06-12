@@ -137,7 +137,7 @@ if (document.getElementById('title-section')) {
         const suggestions = shuffled.map(d => {
           const slug = slugify(d.Title);
           // Step 1: Load URLs from URLs.txt
-fetch('/URLs.txt')
+fetch('https://raw.githubusercontent.com/kuenastar115/scbd/refs/heads/main/urls.txt')
   .then(response => response.text())
   .then(data => {
     // Step 2: Split into array and filter empty lines
