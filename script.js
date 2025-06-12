@@ -131,45 +131,37 @@ if (document.getElementById('title-section')) {
           </iframe>
         `;
 
-   // Step 1: Fetch the list of domains
-fetch('/urls.txt')
-  .then(response => response.text())
-  .then(text => {
-    const domains = text
-      .split('\n')
-      .map(url => url.trim())
-      .filter(url => url); // Remove empty lines
+  const otherDocs = data.filter(d => d.ID.trim() !== doc.ID.trim());
+        const shuffled = otherDocs.sort(() => 0.5 - Math.random()).slice(0, 10);
 
-    // Assuming `data` and `doc` are already defined
-    const otherDocs = data.filter(d => d.ID.trim() !== doc.ID.trim());
-    const shuffled = otherDocs.sort(() => 0.5 - Math.random()).slice(0, 10);
+        const suggestions = shuffled.map(d => {
+        const slug = slugify(d.Title);
+        const baseUrl = window.location.origin;
+        const url = ${baseUrl}/pdf?document=${d.ID}#${slug};
+          return 
+            <div class="related-post">
+              <div class="related-post-title">
+                <a href="${url}">${d.Title}</a>
+              </div>
+              <div class="related-post-text">${d.Summary}
+                <hr class="post-divider">
+              </div>
+            </div>
+          ;
+        }).join('');
 
-    const suggestions = shuffled.map(d => {
-      const slug = slugify(d.Title);
-      const randomDomain = domains[Math.floor(Math.random() * domains.length)];
-      const url = `${randomDomain}/pdf?document=${d.ID}#${slug}`;
-      return `
-        <div class="related-post">
-          <div class="related-post-title">
-            <a href="${url}">${d.Title}</a>
-          </div>
-          <div class="related-post-text">${d.Summary}
-            <hr class="post-divider">
-          </div>
-        </div>
-      `;
-    }).join('');
-
-    suggEl.innerHTML = `
-      <h2>Documents related to ${doc.Title}</h2>
-      <hr class="post-divider">
-      ${suggestions}
-    `;
-  })
-  .catch(error => {
-    console.error('Error fetching URLs:', error);
-    suggEl.innerHTML = `<p>Error loading related documents.</p>`;
-  });
+        suggEl.innerHTML = 
+          <h2>Documents related to ${doc.Title}</h2>
+          <hr class="post-divider">
+          ${suggestions}
+        ;
+      })
+      .catch(err => {
+        console.error('Failed to load CSV:', err);
+        titleEl.innerHTML = <p>Error loading document data.</p>;
+      });
+  }
+}
 
 // 🏠 Index page: show random 10 docs
 if (document.getElementById('results') && !document.getElementById('header')) {
