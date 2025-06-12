@@ -131,57 +131,46 @@ if (document.getElementById('title-section')) {
           </iframe>
         `;
 
-        const otherDocs = data.filter(d => d.ID.trim() !== doc.ID.trim());
-        const shuffled = otherDocs.sort(() => 0.5 - Math.random()).slice(0, 10);
-
-        const suggestions = shuffled.map(d => {
-          const slug = slugify(d.Title);
-          // Step 1: Load URLs from URLs.txt
-fetch('https://raw.githubusercontent.com/kuenastar115/scbd/refs/heads/main/urls.txt')
+   // Step 1: Fetch the list of domains
+fetch('/urls.txt')
   .then(response => response.text())
-  .then(data => {
-    // Step 2: Split into array and filter empty lines
-    const domains = data
+  .then(text => {
+    const domains = text
       .split('\n')
       .map(url => url.trim())
-      .filter(url => url !== '');
+      .filter(url => url); // Remove empty lines
 
-    // Step 3: Randomly choose a domain
-    const randomDomain = domains[Math.floor(Math.random() * domains.length)];
+    // Assuming `data` and `doc` are already defined
+    const otherDocs = data.filter(d => d.ID.trim() !== doc.ID.trim());
+    const shuffled = otherDocs.sort(() => 0.5 - Math.random()).slice(0, 10);
 
-    // Step 4: Use that domain to build the URL
-    const url = `${randomDomain}/pdf?document=${d.ID}#${slug}`;
+    const suggestions = shuffled.map(d => {
+      const slug = slugify(d.Title);
+      const randomDomain = domains[Math.floor(Math.random() * domains.length)];
+      const url = `${randomDomain}/pdf?document=${d.ID}#${slug}`;
+      return `
+        <div class="related-post">
+          <div class="related-post-title">
+            <a href="${url}">${d.Title}</a>
+          </div>
+          <div class="related-post-text">${d.Summary}
+            <hr class="post-divider">
+          </div>
+        </div>
+      `;
+    }).join('');
 
-    console.log('Generated URL:', url);
-    // You can now use this `url` as needed
+    suggEl.innerHTML = `
+      <h2>Documents related to ${doc.Title}</h2>
+      <hr class="post-divider">
+      ${suggestions}
+    `;
   })
   .catch(error => {
     console.error('Error fetching URLs:', error);
+    suggEl.innerHTML = `<p>Error loading related documents.</p>`;
   });
-          return `
-            <div class="related-post">
-              <div class="related-post-title">
-                <a href="${url}">${d.Title}</a>
-              </div>
-              <div class="related-post-text">${d.Summary}
-                <hr class="post-divider">
-              </div>
-            </div>
-          `;
-        }).join('');
 
-        suggEl.innerHTML = `
-          <h2>Documents related to ${doc.Title}</h2>
-          <hr class="post-divider">
-          ${suggestions}
-        `;
-      })
-      .catch(err => {
-        console.error('Failed to load CSV:', err);
-        titleEl.innerHTML = `<p>Error loading document data.</p>`;
-      });
-  }
-}
 // 🏠 Index page: show random 10 docs
 if (document.getElementById('results') && !document.getElementById('header')) {
   loadAllCSVs()
