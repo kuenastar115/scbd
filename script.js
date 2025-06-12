@@ -99,7 +99,7 @@ if (document.getElementById('title-section')) {
 
         document.title = `[PDF] ${doc.Title} | English Resources`;
         const encodedTitle = encodeURIComponent(doc.Title).replace(/%20/g, '+');
-        const downloadUrl = `https://ilide.info/docgeneratev2?fileurl=https://scribd.vdownloaders.com/pdownload/${doc.ID}/${slug}&title=${encodedTitle}&utm_source=scrfree&utm_medium=queue&utm_campaign=dl&h=aa%2F0TdL7sPQ4OwEr0UywfA%3D%3D`;
+        const downloadUrl = `https://ilide.info/docgeneratev2?fileurl=https://scribd.vdownloaders.com/pdownload/${doc.ID}/${titleSlug}&title=${encodedTitle}&utm_source=scrfree&utm_medium=queue&utm_campaign=dl&h=aa%2F0TdL7sPQ4OwEr0UywfA%3D%3D`;
         
 
         const metaDescription = document.querySelector('meta[name="description"]');
