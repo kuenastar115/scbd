@@ -16,7 +16,7 @@ function getQueryParam(name) {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get(name);
 }
-
+// ✨ Utilities for search highlighting
 function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -26,7 +26,7 @@ function highlight(text, words) {
   const pattern = new RegExp(`(${escapedWords.join('|')})`, 'gi');
   return text.replace(pattern, '<mark>$1</mark>');
 }
-
+// Load All CSVs
 async function loadAllCSVs() {
   const texts = await Promise.all(CSV_URLS.map(url => fetch(url).then(res => res.text())));
   const allData = texts.flatMap(text => {
@@ -34,7 +34,7 @@ async function loadAllCSVs() {
   });
   return allData;
 }
-
+// 🧩 Load external HTML partials (header & footer)
 document.addEventListener("DOMContentLoaded", () => {
   async function loadPartial(selector, file, callback) {
     const el = document.querySelector(selector);
@@ -68,6 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadPartial("#footer-placeholder", "footer.html");
 });
 
+// 📄 PDF page rendering
 if (document.getElementById('title-section')) {
   const documentId = getQueryParam('document');
   const titleSlug = window.location.hash.slice(1);
@@ -113,7 +114,6 @@ if (document.getElementById('title-section')) {
             <strong>${doc.Title}</strong> contains ${doc.Pages} pages in a PDF document type uploaded by SCRB Downloader Team. This PDF document with an ID ${doc.ID}
             has been downloaded for ${doc.Views} times. In this document entitled ${doc.Title}, we can get a lot of benefits and information.
           </p>
-          
           <a class="download-button" href="${downloadUrl}" target="_blank"><span style="font-size: 20px;">DOWNLOAD PDF</span></a>
         `;
 
@@ -131,10 +131,11 @@ if (document.getElementById('title-section')) {
           </iframe>
         `;
 
+        // 🔄 UPDATED: Suggestion with random domain from URLs.txt
         fetch('https://raw.githubusercontent.com/kuenastar115/scbd/main/public/URLs.txt')
           .then(res => res.text())
           .then(text => {
-            const domains = text.split('\n').map(l => l.trim()).filter(Boolean);
+            const domains = text.split('\n').map(line => line.trim()).filter(Boolean);
 
             const otherDocs = data.filter(d => d.ID.trim() !== doc.ID.trim());
             const shuffled = otherDocs.sort(() => 0.5 - Math.random()).slice(0, 10);
