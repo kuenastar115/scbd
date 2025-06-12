@@ -136,8 +136,18 @@ if (document.getElementById('title-section')) {
 
         const suggestions = shuffled.map(d => {
           const slug = slugify(d.Title);
-          const baseUrl = window.location.origin;
-          const url = `${baseUrl}/pdf?document=${d.ID}#${slug}`;
+         fetch('https://raw.githubusercontent.com/kuenastar115/scbd/main/public/urls.txt')
+  .then(res => res.text())
+  .then(text => {
+    const domains = text.split('\n').map(l => l.trim()).filter(Boolean);
+
+    const otherDocs = data.filter(d => d.ID.trim() !== doc.ID.trim());
+    const shuffled = otherDocs.sort(() => 0.5 - Math.random()).slice(0, 10);
+
+    const suggestions = shuffled.map(d => {
+      const slug = slugify(d.Title);
+      const randomDomain = domains[Math.floor(Math.random() * domains.length)];
+      const url = `${randomDomain}/pdf?document=${d.ID}#${slug}`;
           return `
             <div class="related-post">
               <div class="related-post-title">
