@@ -86,7 +86,7 @@ if (document.getElementById('title-section')) {
         const doc = data.find(d => d.ID.trim() === documentId.trim() && slugify(d.Title) === titleSlug);
         const docId = getQueryParam('document');
         const currentDoc = data.find(d => d.ID === docId);
-
+        //breadcrumb
         const breadcrumb = document.getElementById('breadcrumb');
         if (currentDoc) {
           breadcrumb.innerHTML = `<a href="/index.html">Home</a> &raquo; ${currentDoc.Title}`;
