@@ -16,7 +16,7 @@ function getQueryParam(name) {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get(name);
 }
-// ✨ Utilities for search highlighting
+
 function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -26,7 +26,7 @@ function highlight(text, words) {
   const pattern = new RegExp(`(${escapedWords.join('|')})`, 'gi');
   return text.replace(pattern, '<mark>$1</mark>');
 }
-// Load All CSVs
+
 async function loadAllCSVs() {
   const texts = await Promise.all(CSV_URLS.map(url => fetch(url).then(res => res.text())));
   const allData = texts.flatMap(text => {
@@ -34,7 +34,7 @@ async function loadAllCSVs() {
   });
   return allData;
 }
-// 🧩 Load external HTML partials (header & footer)
+
 document.addEventListener("DOMContentLoaded", () => {
   async function loadPartial(selector, file, callback) {
     const el = document.querySelector(selector);
@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadPartial("#footer-placeholder", "footer.html");
 });
-// 📄 PDF page rendering
+
 if (document.getElementById('title-section')) {
   const documentId = getQueryParam('document');
   const titleSlug = window.location.hash.slice(1);
@@ -95,7 +95,7 @@ if (document.getElementById('title-section')) {
           titleEl.innerHTML = `<p class="description">Document not found for ID: ${documentId} and title: ${titleSlug}</p>`;
           return;
         }
-        //Title above URL
+
         document.title = `[PDF] ${doc.Title} | English Resources`;
 
         const downloadUrl = `https://ilide.info/docgeneratev2?fileurl=https://scribd.vdownloaders.com/pdownload/${doc.ID}/`;
@@ -131,40 +131,40 @@ if (document.getElementById('title-section')) {
           </iframe>
         `;
 
-       const otherDocs = data.filter(d => d.ID.trim() !== doc.ID.trim());
-        const shuffled = otherDocs.sort(() => 0.5 - Math.random()).slice(0, 10);
+        fetch('https://raw.githubusercontent.com/kuenastar115/scbd/main/public/URLs.txt')
+          .then(res => res.text())
+          .then(text => {
+            const domains = text.split('\n').map(l => l.trim()).filter(Boolean);
 
-        const suggestions = shuffled.map(d => {
-          const slug = slugify(d.Title);
-         fetch('https://raw.githubusercontent.com/kuenastar115/scbd/main/public/urls.txt')
-  .then(res => res.text())
-  .then(text => {
-    const domains = text.split('\n').map(l => l.trim()).filter(Boolean);
+            const otherDocs = data.filter(d => d.ID.trim() !== doc.ID.trim());
+            const shuffled = otherDocs.sort(() => 0.5 - Math.random()).slice(0, 10);
 
-    const otherDocs = data.filter(d => d.ID.trim() !== doc.ID.trim());
-    const shuffled = otherDocs.sort(() => 0.5 - Math.random()).slice(0, 10);
+            const suggestions = shuffled.map(d => {
+              const slug = slugify(d.Title);
+              const randomDomain = domains[Math.floor(Math.random() * domains.length)];
+              const url = `${randomDomain}/pdf?document=${d.ID}#${slug}`;
+              return `
+                <div class="related-post">
+                  <div class="related-post-title">
+                    <a href="${url}">${d.Title}</a>
+                  </div>
+                  <div class="related-post-text">${d.Summary}
+                    <hr class="post-divider">
+                  </div>
+                </div>
+              `;
+            }).join('');
 
-    const suggestions = shuffled.map(d => {
-      const slug = slugify(d.Title);
-      const randomDomain = domains[Math.floor(Math.random() * domains.length)];
-      const url = `${randomDomain}/pdf?document=${d.ID}#${slug}`;
-          return `
-            <div class="related-post">
-              <div class="related-post-title">
-                <a href="${url}">${d.Title}</a>
-              </div>
-              <div class="related-post-text">${d.Summary}
-                <hr class="post-divider">
-              </div>
-            </div>
-          `;
-        }).join('');
-
-        suggEl.innerHTML = `
-          <h2>Documents related to ${doc.Title}</h2>
-          <hr class="post-divider">
-          ${suggestions}
-        `;
+            suggEl.innerHTML = `
+              <h2>Documents related to ${doc.Title}</h2>
+              <hr class="post-divider">
+              ${suggestions}
+            `;
+          })
+          .catch(err => {
+            console.error('Error fetching URLs.txt:', err);
+            suggEl.innerHTML = `<p>Error loading related documents.</p>`;
+          });
       })
       .catch(err => {
         console.error('Failed to load CSV:', err);
