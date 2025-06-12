@@ -135,10 +135,10 @@ if (document.getElementById('title-section')) {
         const shuffled = otherDocs.sort(() => 0.5 - Math.random()).slice(0, 10);
 
         const suggestions = shuffled.map(d => {
-        const slug = slugify(d.Title);
-        const baseUrl = window.location.origin;
-        const url = ${baseUrl}/pdf?document=${d.ID}#${slug};
-          return 
+          const slug = slugify(d.Title);
+          const baseUrl = window.location.origin;
+          const url = `${baseUrl}/pdf?document=${d.ID}#${slug}`;
+          return `
             <div class="related-post">
               <div class="related-post-title">
                 <a href="${url}">${d.Title}</a>
@@ -147,18 +147,18 @@ if (document.getElementById('title-section')) {
                 <hr class="post-divider">
               </div>
             </div>
-          ;
+          `;
         }).join('');
 
-        suggEl.innerHTML = 
+        suggEl.innerHTML = `
           <h2>Documents related to ${doc.Title}</h2>
           <hr class="post-divider">
           ${suggestions}
-        ;
+        `;
       })
       .catch(err => {
         console.error('Failed to load CSV:', err);
-        titleEl.innerHTML = <p>Error loading document data.</p>;
+        titleEl.innerHTML = `<p>Error loading document data.</p>`;
       });
   }
 }
