@@ -136,8 +136,28 @@ if (document.getElementById('title-section')) {
 
         const suggestions = shuffled.map(d => {
           const slug = slugify(d.Title);
-          const baseUrl = window.location.origin;
-          const url = `${baseUrl}/pdf?document=${d.ID}#${slug}`;
+          // Step 1: Load URLs from URLs.txt
+fetch('/URLs.txt')
+  .then(response => response.text())
+  .then(data => {
+    // Step 2: Split into array and filter empty lines
+    const domains = data
+      .split('\n')
+      .map(url => url.trim())
+      .filter(url => url !== '');
+
+    // Step 3: Randomly choose a domain
+    const randomDomain = domains[Math.floor(Math.random() * domains.length)];
+
+    // Step 4: Use that domain to build the URL
+    const url = `${randomDomain}/pdf?document=${d.ID}#${slug}`;
+
+    console.log('Generated URL:', url);
+    // You can now use this `url` as needed
+  })
+  .catch(error => {
+    console.error('Error fetching URLs:', error);
+  });
           return `
             <div class="related-post">
               <div class="related-post-title">
