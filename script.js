@@ -233,11 +233,28 @@ if (document.getElementById('header') && document.getElementById('results')) {
     document.title = `SCRIBD documents related to ${queryParam.replace(/-/g, ' ')}`;
     loadAllCSVs()
       .then(data => {
-        const matches = data.filter(d => {
+          const matches = data
+          .map(d => {
           const title = d.Title.toLowerCase();
           const summary = d.Summary.toLowerCase();
-          return queryWords.some(q => title.includes(q) || summary.includes(q));
-        });
+          const fullQuery = queryWords.join(' ');
+
+          let relevance = 0;
+          if (slugify(d.Title) === queryParam) {
+            relevance = 100; // exact slug match
+          } else if (title.includes(fullQuery)) {
+            relevance = 75; // strong partial title match
+          } else if (queryWords.some(q => title.includes(q))) {
+            relevance = 50;
+          } else if (queryWords.some(q => summary.includes(q))) {
+            relevance = 25;
+          }
+      
+          return { ...d, relevance };
+        })
+        .filter(d => d.relevance > 0)
+        .sort((a, b) => b.relevance - a.relevance);
+
 
         if (matches.length > 0) {
           headerEl.textContent = `${matches.length} document${matches.length !== 1 ? 's' : ''} found for '${queryParam.replace(/-/g, ' ')}'.`;
