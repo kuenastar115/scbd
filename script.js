@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  loadPartial("#header-placeholder", "header.html", () => {
+  loadPartial("#header-placeholder", "/components/header.html", () => {
     const form = document.getElementById('searchForm');
     if (form) {
       form.addEventListener('submit', function (e) {
@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  loadPartial("#footer-placeholder", "footer.html");
+  loadPartial("#footer-placeholder", "/components/footer.html");
 });
 
 // 📄 PDF page rendering
