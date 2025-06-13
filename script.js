@@ -95,8 +95,7 @@ if (document.getElementById('title-section')) {
     loadAllCSVs()
       .then(data => {
         const doc = data.find(d => d.ID.trim() === documentId.trim() && slugify(d.Title) === titleSlug);
-        const docId = getQueryParam('document');
-        const currentDoc = data.find(d => d.ID === docId);
+       
         //breadcrumb
         const breadcrumb = document.getElementById('breadcrumb');
         const currentDoc = data.find(d => d.ID === documentId);
