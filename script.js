@@ -99,8 +99,10 @@ if (document.getElementById('title-section')) {
         const currentDoc = data.find(d => d.ID === docId);
         //breadcrumb
         const breadcrumb = document.getElementById('breadcrumb');
-        if (currentDoc) {
-          breadcrumb.innerHTML = `<a href="/index.html">Home</a> &raquo; ${currentDoc.Title}`;
+        const currentDoc = data.find(d => d.ID === documentId);
+
+        if (breadcrumb && currentDoc) {
+        breadcrumb.innerHTML = `<a href=\"/\">Home</a> &raquo; ${currentDoc.Title}`;
         }
 
         if (!doc) {
