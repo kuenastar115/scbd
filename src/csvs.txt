@@ -1,0 +1,4 @@
+https://raw.githubusercontent.com/kuenastar115/scbd/main/public/src/scbd.csv
+https://raw.githubusercontent.com/kuenastar115/scbd/main/public/src/scbd1.csv
+https://raw.githubusercontent.com/kuenastar115/scbd/main/public/src/scbd2.csv
+https://raw.githubusercontent.com/kuenastar115/scbd/main/public/src/scbd3.csv
