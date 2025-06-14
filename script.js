@@ -111,7 +111,7 @@ if (document.getElementById('title-section')) {
 
         document.title = `[PDF] ${doc.Title} | English Resources`;
         const encodedTitle = encodeURIComponent(doc.Title).replace(/%20/g, '+');
-        const downloadUrl = `https://compress.tacz.info/?fileurl=https://scribd.vpdfs.com/pdownload/${doc.ID}/${titleSlug}&title=${encodedTitle}&utm_source=downscr&utm_medium=queue&utm_campaign=dl`;
+        const downloadUrl = `https://scribd.vdownloaders.com/document/${doc.ID}/${titleSlug}`;
         
 
         const metaDescription = document.querySelector('meta[name="description"]');
