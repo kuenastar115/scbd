@@ -1,9 +1,5 @@
-const CSV_URLS = [
-  'https://raw.githubusercontent.com/kuenastar115/scbd/refs/heads/main/scbd.csv',
-  'https://raw.githubusercontent.com/kuenastar115/scbd/refs/heads/main/scbd1.csv',
-  'https://raw.githubusercontent.com/kuenastar115/scbd/refs/heads/main/scbd2.csv',
-  'https://raw.githubusercontent.com/kuenastar115/scbd/refs/heads/main/scbd3.csv'
-];
+// Load CSV URLs from a text file dynamically
+const CSV_TXT_URL = 'https://raw.githubusercontent.com/kuenastar115/scbd/main/src/csvs.txt';
 
 function slugify(title) {
   return title.trim()
@@ -16,6 +12,7 @@ function getQueryParam(name) {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get(name);
 }
+
 // ✨ Utilities for search highlighting
 function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -26,14 +23,23 @@ function highlight(text, words) {
   const pattern = new RegExp(`(${escapedWords.join('|')})`, 'gi');
   return text.replace(pattern, '<mark>$1</mark>');
 }
-// Load All CSVs
+
+// Load All CSVs from txt file
 async function loadAllCSVs() {
-  const texts = await Promise.all(CSV_URLS.map(url => fetch(url).then(res => res.text())));
-  const allData = texts.flatMap(text => {
-    return Papa.parse(text, { header: true, skipEmptyLines: true }).data;
-  });
-  return allData;
+  try {
+    const txtRes = await fetch(CSV_TXT_URL);
+    const txtContent = await txtRes.text();
+    const csvUrls = txtContent.split('\n').map(line => line.trim()).filter(Boolean);
+
+    const texts = await Promise.all(csvUrls.map(url => fetch(url).then(res => res.text())));
+    const allData = texts.flatMap(text => Papa.parse(text, { header: true, skipEmptyLines: true }).data);
+    return allData;
+  } catch (err) {
+    console.error("Failed to load CSVs from TXT:", err);
+    return [];
+  }
 }
+
 // 🧩 Load external HTML partials (header & footer)
 document.addEventListener("DOMContentLoaded", () => {
   async function loadPartial(selector, file, callback) {
@@ -67,6 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadPartial("#footer-placeholder", "/components/footer.html");
 });
+
 
 // 📄 PDF page rendering
 if (document.getElementById('title-section')) {
