@@ -1,14 +1,20 @@
 <header>
   <div class="container">
     <a href="/index.html" class="logo">[scrbd]</a>
-    <form id="searchForm" class="search-form">
-      <input
-        type="text"
-        name="query"
-        id="searchInput"
-        class="search-input"
-        placeholder="type document you want to find..." />
-      <button type="submit">search</button>
-    </form>
+<div class="search-wrapper">
+  <button id="search-toggle" class="search-icon" aria-label="Search">
+    🔍
+  </button>
+  <form id="searchForm" class="search-form hidden">
+    <input
+      type="text"
+      name="query"
+      id="searchInput"
+      class="search-input"
+      placeholder="type document you want to find..." />
+    <button type="submit">search</button>
+  </form>
+</div>
+
   </div>
 </header>
