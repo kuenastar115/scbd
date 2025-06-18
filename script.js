@@ -307,3 +307,11 @@ if (document.getElementById('header') && document.getElementById('results')) {
       });
   }
 }
+
+//Search Button
+  const toggleBtn = document.getElementById("search-toggle");
+  const form = document.getElementById("searchForm");
+
+  toggleBtn?.addEventListener("click", () => {
+    form.classList.toggle("hidden");
+  });
