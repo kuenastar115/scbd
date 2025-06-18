@@ -308,14 +308,4 @@ if (document.getElementById('header') && document.getElementById('results')) {
   }
 }
 
-//Search Button
-document.addEventListener("DOMContentLoaded", () => {
-    const toggleBtn = document.getElementById("search-toggle");
-    const form = document.getElementById("searchForm");
 
-    if (toggleBtn && form) {
-      toggleBtn.addEventListener("click", () => {
-        form.classList.toggle("hidden");
-      });
-    }
-  });
