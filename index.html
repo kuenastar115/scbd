@@ -10,18 +10,54 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  
-<div id="header-placeholder"></div>
 
-<main>
-  <h1>Thousand documents from [SCRIBD] ready to download</h1>
-  <hr class="post-divider">
-  <div id="results"></div>
-</main>
-  
-<div id="footer-placeholder"></div>
+  <header>
+    <div class="container">
+      <a href="/index.html" class="logo">[scrbd]</a>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-<script src="/script.js"></script>
+      <div class="search-wrapper">
+        <!-- Search icon: visible only on small screens -->
+        <button id="search-toggle" class="search-icon" aria-label="Search">
+          🔍
+        </button>
+
+        <!-- Search form: hidden on small screens, visible on desktop -->
+        <form id="searchForm" class="search-form">
+          <input
+            type="text"
+            name="query"
+            id="searchInput"
+            class="search-input"
+            placeholder="type document you want to find..." />
+          <button type="submit">search</button>
+        </form>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <h1>Thousand documents from [SCRIBD] ready to download</h1>
+    <hr class="post-divider">
+    <div id="results"></div>
+  </main>
+
+  <footer id="footer-placeholder"></footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script src="/script.js"></script>
+
+  <!-- Toggle search input on mobile -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const toggleBtn = document.getElementById("search-toggle");
+      const form = document.getElementById("searchForm");
+
+      if (toggleBtn && form) {
+        toggleBtn.addEventListener("click", () => {
+          form.classList.toggle("hidden");
+        });
+      }
+    });
+  </script>
 </body>
 </html>
