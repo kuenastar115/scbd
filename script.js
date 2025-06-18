@@ -309,9 +309,13 @@ if (document.getElementById('header') && document.getElementById('results')) {
 }
 
 //Search Button
-  const toggleBtn = document.getElementById("search-toggle");
-  const form = document.getElementById("searchForm");
+document.addEventListener("DOMContentLoaded", () => {
+    const toggleBtn = document.getElementById("search-toggle");
+    const form = document.getElementById("searchForm");
 
-  toggleBtn?.addEventListener("click", () => {
-    form.classList.toggle("hidden");
+    if (toggleBtn && form) {
+      toggleBtn.addEventListener("click", () => {
+        form.classList.toggle("hidden");
+      });
+    }
   });
