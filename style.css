@@ -305,4 +305,50 @@ footer nav a {
   }
 }
 
+.search-wrapper {
+  position: relative;
+}
+
+.search-icon {
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #555;
+  display: none; /* hidden by default for desktop */
+}
+
+.search-form.hidden {
+  display: none;
+}
+
+/* MOBILE ONLY */
+@media (max-width: 768px) {
+  .search-icon {
+    display: inline;
+  }
+
+  .search-form {
+    width: 100%;
+    flex-direction: column;
+    margin-top: 10px;
+  }
+
+  .search-form input,
+  .search-form button {
+    width: 100%;
+    border-radius: 0;
+    font-size: 16px;
+    padding: 12px;
+  }
+
+  .search-form button {
+    border-top: 1px solid #ccc;
+  }
+
+  header .container {
+    align-items: flex-start;
+    gap: 0;
+  }
+}
 
