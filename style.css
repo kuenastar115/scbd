@@ -84,12 +84,12 @@ header .container {
 /* Main Content */
 main {
   flex: 1;
-  padding: 140px 40px 40px;
+  margin-top: 80px;
+  padding: 40px 40px 40px; /* or just padding: 40px; */
   max-width: 960px;
   margin: 0 auto;
   background-color: white;
   width: 100%;
-  margin-top: 80px; /* match the header height */
 }
 
 .breadcrumb {
@@ -219,8 +219,13 @@ footer nav a {
     gap: 10px;
     align-items: flex-start;
   }
+    header {
+    height: 120px;
+  }
+
   main {
-    padding: 120px 20px 30px;
+    margin-top: 120px;
+    padding: 30px 20px;
   }
 
 .result-item {
@@ -241,30 +246,6 @@ footer nav a {
       color: black;
     }
 
-@media (max-width: 768px) {
-  header .container {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-  }
-
-  .search-form {
-    width: 82%;
-    max-width: 82%;
-    border-radius: 10px;
-  }
-
-  .search-form input {
-    padding: 12px 14px;
-    font-size: 16px;
-  }
-
-  .search-form button {
-    padding: 12px 16px;
-    font-size: 16px;
-    white-space: nowrap;
-  }
-}
 
   @media (max-width: 600px) {
   .site-header {
@@ -290,12 +271,3 @@ footer nav a {
   }
 }
 
-@media (max-width: 768px) {
-  header {
-    height: 120px;
-  }
-
-  main {
-    margin-top: 120px;
-  }
-}
