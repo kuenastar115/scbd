@@ -86,7 +86,7 @@ header .container {
 main {
   flex: 1;
   margin: 80px auto 0 auto;
-  padding: 140px 40px 40px; /* or just padding: 40px; */
+  padding: 40px 40px 40px; /* or just padding: 40px; */
   max-width: 960px;
   background-color: white;
   width: 100%;
