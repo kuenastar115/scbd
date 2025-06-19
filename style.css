@@ -206,7 +206,7 @@ footer nav a {
 .footerdesc {
   font-size: 10px;
   line-height: 1.6;
-  margin-top: 20px;
+  padding-top: 20px;
   margin-bottom: 20px;
   color: #888;
   text-align: center;
