@@ -288,6 +288,22 @@ if (document.getElementById('header') && document.getElementById('results')) {
           }).join('');
 
           container.innerHTML = output;
+
+          let pagination = '<div class="pagination">';
+          if (pageParam > 1) {
+              pagination += `<a href="?query=${queryParam}&page=${pageParam - 1}">Prev</a>`;
+            }
+            
+            for (let i = 1; i <= totalPages; i++) {
+              pagination += `<a href="?query=${queryParam}&page=${i}" ${i === pageParam ? 'class="active"' : ''}>${i}</a>`;
+            }
+            
+            if (pageParam < totalPages) {
+              pagination += `<a href="?query=${queryParam}&page=${pageParam + 1}">Next</a>`;
+            }
+            pagination += '</div>';
+            container.innerHTML += pagination;
+          
         } else {
           headerEl.textContent = `No documents found for '${queryParam.replace(/-/g, ' ')}'. But, these documents might be interesting for you.`;
           const suggestions = data.sort(() => 0.5 - Math.random()).slice(0, 10).map(d => {
@@ -313,21 +329,6 @@ if (document.getElementById('header') && document.getElementById('results')) {
       });
   }
 }
-
-let pagination = '<div class="pagination">';
-if (pageParam > 1) {
-  pagination += `<a href="?query=${queryParam}&page=${pageParam - 1}">Prev</a>`;
-}
-
-for (let i = 1; i <= totalPages; i++) {
-  pagination += `<a href="?query=${queryParam}&page=${i}" ${i === pageParam ? 'class="active"' : ''}>${i}</a>`;
-}
-
-if (pageParam < totalPages) {
-  pagination += `<a href="?query=${queryParam}&page=${pageParam + 1}">Next</a>`;
-}
-pagination += '</div>';
-container.innerHTML += pagination;
 
 
 //header margin
