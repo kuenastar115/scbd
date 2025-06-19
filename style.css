@@ -288,6 +288,7 @@ footer nav a {
   max-width: 100%;
   gap: 8px 12px;           /* row gap (vertical), column gap (horizontal) */
   row-gap: 12px;           /* ensures vertical spacing when wrapping */
+  text-align: center
 }
 
 .pagination a,
