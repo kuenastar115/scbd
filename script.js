@@ -230,6 +230,8 @@ if (document.getElementById('results') && !document.getElementById('header')) {
 if (document.getElementById('header') && document.getElementById('results')) {
   const baseUrl = window.location.origin;
   const queryParam = getQueryParam('query');
+  const pageParam = parseInt(getQueryParam('page')) || 1;
+  const RESULTS_PER_PAGE = 10;
   const queryWords = queryParam ? queryParam.toLowerCase().split('-').filter(Boolean) : [];
   const headerEl = document.getElementById('header');
   const container = document.getElementById('results');
@@ -263,10 +265,13 @@ if (document.getElementById('header') && document.getElementById('results')) {
         .filter(d => d.relevance > 0)
         .sort((a, b) => b.relevance - a.relevance);
 
+        const totalPages = Math.ceil(matches.length / RESULTS_PER_PAGE);
+        const startIndex = (pageParam - 1) * RESULTS_PER_PAGE;
+        const pageResults = matches.slice(startIndex, startIndex + RESULTS_PER_PAGE);
 
         if (matches.length > 0) {
           headerEl.textContent = `${matches.length} document${matches.length !== 1 ? 's' : ''} found for '${queryParam.replace(/-/g, ' ')}'.`;
-          const output = matches.map(d => {
+          const output = pageResults.map(d => {
             const slug = slugify(d.Title);
             const url = `${baseUrl}/pdf/${d.ID}-${slug}`;
             const highlightedTitle = highlight(d.Title, queryWords);
@@ -308,6 +313,23 @@ if (document.getElementById('header') && document.getElementById('results')) {
       });
   }
 }
+
+let pagination = '<div class="pagination">';
+if (pageParam > 1) {
+  pagination += `<a href="?query=${queryParam}&page=${pageParam - 1}">Prev</a>`;
+}
+
+for (let i = 1; i <= totalPages; i++) {
+  pagination += `<a href="?query=${queryParam}&page=${i}" ${i === pageParam ? 'class="active"' : ''}>${i}</a>`;
+}
+
+if (pageParam < totalPages) {
+  pagination += `<a href="?query=${queryParam}&page=${pageParam + 1}">Next</a>`;
+}
+pagination += '</div>';
+container.innerHTML += pagination;
+
+
 //header margin
   window.addEventListener('DOMContentLoaded', () => {
     const header = document.querySelector('header');
