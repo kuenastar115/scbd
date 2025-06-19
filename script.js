@@ -288,46 +288,60 @@ if (document.getElementById('header') && document.getElementById('results')) {
           }).join('');
 
           container.innerHTML = output;
+                  
+          const paginationHTML = generatePagination(queryParam, pageParam, totalPages);
+          container.innerHTML += paginationHTML;
 
-          function generatePagination(queryParam, pageParam, totalPages) {
-            const maxVisible = 6;
+           function generatePagination(queryParam, currentPage, totalPages) {
+            const maxVisible = 5;
             let paginationHTML = '<div class="pagination">';
           
-            if (pageParam > 1) {
-              paginationHTML += `<a href="?query=${queryParam}&page=${pageParam - 1}">Prev</a>`;
+            if (currentPage > 1) {
+              paginationHTML += `<a href="?query=${queryParam}&page=${currentPage - 1}">Prev</a>`;
             }
           
             const pages = [];
           
-            for (let i = 1; i <= Math.min(maxVisible, totalPages); i++) {
-              pages.push(i);
-            }
-          
-            if (totalPages > maxVisible + 1) {
-              pages.push('...');
-              pages.push(totalPages);
-            } else if (totalPages === maxVisible + 1) {
-              pages.push(totalPages);
+            if (totalPages <= 8) {
+              // Show all pages if few
+              for (let i = 1; i <= totalPages; i++) pages.push(i);
+            } else {
+              if (currentPage <= 4) {
+                // Show 1 to 6, then ellipsis, then last
+                for (let i = 1; i <= 6; i++) pages.push(i);
+                pages.push('...');
+                pages.push(totalPages);
+              } else if (currentPage >= totalPages - 3) {
+                // Show first, ellipsis, then last 6 pages
+                pages.push(1);
+                pages.push('...');
+                for (let i = totalPages - 5; i <= totalPages; i++) pages.push(i);
+              } else {
+                // Show first, ellipsis, 2 before & after current, ellipsis, last
+                pages.push(1);
+                pages.push('...');
+                for (let i = currentPage - 2; i <= currentPage + 2; i++) pages.push(i);
+                pages.push('...');
+                pages.push(totalPages);
+              }
             }
           
             pages.forEach(p => {
               if (p === '...') {
                 paginationHTML += `<span class="dots">...</span>`;
               } else {
-                paginationHTML += `<a href="?query=${queryParam}&page=${p}" ${p === pageParam ? 'class="active"' : ''}>${p}</a>`;
+                paginationHTML += `<a href="?query=${queryParam}&page=${p}" ${p === currentPage ? 'class="active"' : ''}>${p}</a>`;
               }
             });
           
-            if (pageParam < totalPages) {
-              paginationHTML += `<a href="?query=${queryParam}&page=${pageParam + 1}">Next</a>`;
+            if (currentPage < totalPages) {
+              paginationHTML += `<a href="?query=${queryParam}&page=${currentPage + 1}">Next</a>`;
             }
           
             paginationHTML += '</div>';
             return paginationHTML;
           }
-          
-                    const paginationHTML = generatePagination(queryParam, pageParam, totalPages);
-          container.innerHTML += paginationHTML;
+
           
         } else {
           headerEl.textContent = `No documents found for '${queryParam.replace(/-/g, ' ')}'. But, these documents might be interesting for you.`;
