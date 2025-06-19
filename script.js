@@ -289,20 +289,45 @@ if (document.getElementById('header') && document.getElementById('results')) {
 
           container.innerHTML = output;
 
-          let pagination = '<div class="pagination">';
-          if (pageParam > 1) {
-              pagination += `<a href="?query=${queryParam}&page=${pageParam - 1}">Prev</a>`;
-            }
-            
-            for (let i = 1; i <= totalPages; i++) {
-              pagination += `<a href="?query=${queryParam}&page=${i}" ${i === pageParam ? 'class="active"' : ''}>${i}</a>`;
-            }
-            
-            if (pageParam < totalPages) {
-              pagination += `<a href="?query=${queryParam}&page=${pageParam + 1}">Next</a>`;
-            }
-            pagination += '</div>';
-            container.innerHTML += pagination;
+          function generatePagination(queryParam, pageParam, totalPages) {
+  const maxVisible = 6;
+  let paginationHTML = '<div class="pagination">';
+
+  if (pageParam > 1) {
+    paginationHTML += `<a href="?query=${queryParam}&page=${pageParam - 1}">Prev</a>`;
+  }
+
+  const pages = [];
+
+  for (let i = 1; i <= Math.min(maxVisible, totalPages); i++) {
+    pages.push(i);
+  }
+
+  if (totalPages > maxVisible + 1) {
+    pages.push('...');
+    pages.push(totalPages);
+  } else if (totalPages === maxVisible + 1) {
+    pages.push(totalPages);
+  }
+
+  pages.forEach(p => {
+    if (p === '...') {
+      paginationHTML += `<span class="dots">...</span>`;
+    } else {
+      paginationHTML += `<a href="?query=${queryParam}&page=${p}" ${p === pageParam ? 'class="active"' : ''}>${p}</a>`;
+    }
+  });
+
+  if (pageParam < totalPages) {
+    paginationHTML += `<a href="?query=${queryParam}&page=${pageParam + 1}">Next</a>`;
+  }
+
+  paginationHTML += '</div>';
+  return paginationHTML;
+}
+
+          const paginationHTML = generatePagination(queryParam, pageParam, totalPages);
+container.innerHTML += paginationHTML;
           
         } else {
           headerEl.textContent = `No documents found for '${queryParam.replace(/-/g, ' ')}'. But, these documents might be interesting for you.`;
