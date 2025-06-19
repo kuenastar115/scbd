@@ -59,13 +59,13 @@ header .container {
   color: #777;
 }
 
-.search-form {
+.searchForm {
   display: flex;
   flex: 1;
   max-width: 720px;
 }
 
-.search-form input {
+.searchForm input {
   width: 100%;
   padding: 10px;
   border: none;
