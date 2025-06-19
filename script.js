@@ -73,6 +73,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadPartial("#footer-placeholder", "/components/footer.html");
 });
+//preserve query
+const q = getQueryParam('query');
+if (q && document.getElementById('searchInput')) {
+  document.getElementById('searchInput').value = q.replace(/-/g, ' ');
+}
 
 
 // 📄 PDF page rendering
