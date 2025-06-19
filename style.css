@@ -84,7 +84,7 @@ header .container {
 /* Main Content */
 main {
   flex: 1;
-  margin-top: 80px;
+  margin-top: 140px;
   margin-inline: auto;
   padding: 40px;
   padding-bottom: 5rem;
@@ -228,7 +228,7 @@ footer nav a {
   }
 
   main {
-    margin-top: 120px;
+    margin-top: 140px;
     padding: 30px 20px;
   }
 
