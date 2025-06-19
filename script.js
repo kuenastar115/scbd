@@ -307,5 +307,9 @@ if (document.getElementById('header') && document.getElementById('results')) {
       });
   }
 }
-
-
+//header margin
+  window.addEventListener('DOMContentLoaded', () => {
+    const header = document.querySelector('header');
+    const main = document.querySelector('main');
+    main.style.marginTop = header.offsetHeight + 'px';
+  });
