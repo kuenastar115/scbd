@@ -85,10 +85,13 @@ header .container {
 /* Main Content */
 main {
   flex: 1;
-  margin: 80px auto 0 auto;
-  padding: 40px 40px 40px; /* or just padding: 40px; */
-  max-width: 960px;
+  padding-top: 120px; /* leave room for fixed header */
+  padding-left: 40px;
+  padding-right: 40px;
+  padding-bottom: 40px;
   background-color: white;
+  max-width: 960px;
+  margin: 0 auto;
   width: 100%;
 }
 
