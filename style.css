@@ -271,7 +271,10 @@ footer nav a {
 
 .pagination {
   text-align: center;
-  margin-top: 2rem;
+  margin: 2.5rem auto;
+  padding-top: 1rem;
+  max-width: 100%;
+  flex-wrap: wrap;
 }
 .pagination a {
   margin: 0 5px;
